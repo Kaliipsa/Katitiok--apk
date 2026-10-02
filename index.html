@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karaokê</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+:root{--bg:#f3effb;--fg:#1d1535;--mut:#6a6088;--card:#fff;--bd:#ddd5f0;--pk:#d81b6a;--cy:#0b8f84;--am:#b9770e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#130e29;--fg:#f4efff;--mut:#9d93c2;--card:#1d1640;--bd:#33295f;--pk:#ff3d8b;--cy:#35e0d0;--am:#ffc857}}
+:root[data-theme="dark"]{--bg:#130e29;--fg:#f4efff;--mut:#9d93c2;--card:#1d1640;--bd:#33295f;--pk:#ff3d8b;--cy:#35e0d0;--am:#ffc857}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px 16px 40px}
+h1,.big,#ly div{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+h1{font-size:2rem;margin:8px 0 2px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:14px}
+h2{font-size:1rem;margin:0 0 10px}
+label{display:block;font-size:.9rem;color:var(--mut);margin:8px 0 4px}
+input[type=file],textarea{width:100%;color:var(--fg);background:transparent;border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit;font-size:.9rem}
+textarea{height:96px;font-family:ui-monospace,Menlo,monospace;font-size:.8rem}
+#st{font-size:.85rem;color:var(--cy);min-height:1.3em;margin:8px 0 0}
+#ly{position:relative;height:min(46vh,340px);overflow-y:auto;text-align:center;padding:30vh 0;scrollbar-width:none;background:var(--card);border:1px solid var(--bd);border-radius:14px;margin-bottom:12px}
+#ly::-webkit-scrollbar{display:none}
+#ly div{font-size:1.5rem;font-weight:600;line-height:1.3;padding:6px 14px;color:var(--mut);opacity:.55;transition:all .25s}
+#ly div.past{opacity:.3}
+#ly div.on{color:var(--pk);opacity:1;font-weight:800;font-size:1.9rem}
+.hud{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.hud>div{flex:1;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 12px;min-width:0}
+.hud small{color:var(--mut);display:block;font-size:.75rem}
+.hud b{font-size:1.6rem;font-family:"Bricolage Grotesque",system-ui,sans-serif}
+#note.ok{color:var(--cy)}
+button{font:inherit;cursor:pointer;border-radius:999px;border:1px solid var(--bd);background:transparent;color:var(--fg);padding:8px 14px}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+#play{width:100%;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;font-size:1.1rem;padding:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button[aria-pressed=true]{background:var(--cy);color:#10102a;border-color:var(--cy);font-weight:700}
+.hint{font-size:.82rem;color:var(--mut);margin:10px 0 0}
+ul{margin:0;padding-left:18px;font-size:.9rem}
+#res{position:fixed;inset:0;background:rgba(10,6,25,.82);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
+#res .card{text-align:center;max-width:340px;width:100%;margin:0}
+.big{font-size:5rem;font-weight:800;line-height:1;color:var(--am)}
+#q,#lq{flex:1;min-width:0;color:var(--fg);background:transparent;border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit}.r{display:block;width:100%;text-align:left;border-radius:10px;margin-top:8px}.r small{color:var(--mut)}@media(pointer:coarse){button{min-height:44px}textarea{font-size:16px}main{padding-bottom:70px}#play{position:sticky;bottom:12px;z-index:5;box-shadow:0 6px 20px rgba(0,0,0,.35)}}#mic,#vz,#vk,#vs,#out{flex:1;min-width:0;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit}#vz,#vk,#vs,#out{width:100%}#bg{position:fixed;inset:-40px;z-index:-1;background:center/cover no-repeat;filter:blur(28px) saturate(1.3);opacity:0;transition:opacity .8s;pointer-events:none}
+#bg::after{content:"";position:absolute;inset:0;background:var(--bg);opacity:.58}
+body.has-cover #bg{opacity:1}
+body.has-cover .card,body.has-cover #ly,body.has-cover .hud>div{background:color-mix(in srgb,var(--card) 68%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#pg{accent-color:var(--pk);height:14px}</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<main>
+<h1>Karaokê</h1>
+<p class="sub">Busque uma música, cante e veja sua nota no final.</p>
+
+<section class="card">
+<h2>Buscar música</h2>
+<div style="display:flex;gap:8px"><input id="q" type="search" placeholder="Nome da música ou artista"><button id="go">Buscar</button></div>
+<div id="rs"></div>
+<p id="st"></p>
+<progress id="pg" max="100" value="0" hidden style="width:100%;margin-top:8px"></progress>
+<p class="hint" id="ph" hidden></p>
+<div class="chips" style="margin-top:10px"><button id="e">Letra mais cedo</button><button id="l">Letra mais tarde</button><span id="of" class="hint">sincronia 0 s</span></div>
+<label for="lq">Letra não veio ou está errada? Busque de novo</label>
+<div style="display:flex;gap:8px"><input id="lq" type="search" placeholder="ex.: george michael careless whisper"><button id="lb">Buscar letra</button></div>
+<label for="lrc">Letra sincronizada (LRC): preenchida sozinha, edite se precisar</label>
+<textarea id="lrc" spellcheck="false"></textarea>
+</section>
+
+<div id="ly" aria-live="polite"></div>
+
+<div class="hud">
+<div><small>Sua nota <span id="tgt"></span></small><b id="note">—</b></div>
+<div><small>Pontuação ao vivo</small><b id="sc">0</b></div>
+</div>
+<div class="card" style="margin-bottom:12px"><label for="gv" style="margin-top:0">Voz do artista: <b id="gvn">0%</b></label><input id="gv" type="range" min="0" max="1" step="0.05" value="0" style="width:100%" disabled></div>
+<button id="play">▶ Cantar</button>
+
+<section class="card" style="margin-top:14px">
+<h2>Microfone e saída de áudio</h2>
+<div style="display:flex;gap:8px"><select id="mic" aria-label="Escolher microfone"><option value="">Microfone padrão</option></select><button id="mt">Ativar</button></div>
+<progress id="lv" max="1" value="0" style="width:100%;margin-top:10px"></progress>
+<label for="out" id="outl">Saída de áudio (onde a música e as vozes tocam)</label>
+<select id="out"><option value="">Padrão do sistema</option></select>
+<p class="hint" id="outh" hidden>Este navegador não permite escolher a saída de áudio. Use o Chrome, Edge ou Brave.</p>
+<p class="hint">Toque em Ativar, permita o acesso e escolha o microfone na lista. A barra deve mexer quando você falar.</p>
+</section>
+
+<section class="card" style="margin-top:14px">
+<h2>Voz e auto-tune</h2>
+<label for="vz">Efeito de voz</label>
+<select id="vz"><option value="off">Normal</option><option value="sue">Auto-tune suave</option><option value="for">Auto-tune forte (robótico)</option><option value="agu">Voz aguda</option><option value="gra">Voz grave</option><option value="cor">Coro (3 vozes)</option><option value="oit">Dueto de oitava</option></select>
+<div style="display:flex;gap:8px;margin-top:4px"><div style="flex:1"><label for="vk">Tom da música</label><select id="vk"></select></div><div style="flex:1"><label for="vs">Escala</label><select id="vs"><option value="0">Cromática (qualquer nota)</option><option value="1">Maior</option><option value="2">Menor</option></select></div></div>
+<label for="vr">Correção: robótico ⟷ natural</label>
+<input id="vr" type="range" min="0" max="1" step="0.05" value="0.35" style="width:100%">
+<p class="hint">Ligue "Ouvir minha voz" (com fones) para ouvir o efeito. Tom e escala valem para o auto-tune e o coro; se não souber o tom, deixe Cromática. A pontuação continua medindo a sua voz de verdade, sem o efeito.</p>
+</section>
+
+<section class="card" style="margin-top:14px">
+<h2>Efeitos na sua voz</h2>
+<div class="chips">
+<button data-k="mon" aria-pressed="false">Ouvir minha voz</button>
+<button data-k="eco" aria-pressed="false">Eco</button>
+<button data-k="rev" aria-pressed="false">Reverb</button>
+<button data-k="rob" aria-pressed="false">Robô</button>
+</div>
+<p class="hint">Use fones de ouvido: sem eles, o microfone capta a música e a nota perde precisão. Os efeitos só aparecem com "Ouvir minha voz" ligado.</p>
+</section>
+
+<section class="card">
+<h2>Andamento do projeto</h2>
+<ul>
+<li>✅ Site: letra sincronizada, microfone, pontuação e efeitos</li>
+<li>⏳ Puxar música do YouTube (precisa de servidor)</li>
+<li>⏳ Separar vocal e instrumental (precisa de servidor)</li>
+<li>⏳ Letra automática e auto-tune de verdade</li>
+</ul>
+</section>
+</main>
+
+<div id="res" hidden>
+<div class="card">
+<div class="big" id="big">0</div>
+<h2 id="rk" style="margin-top:8px"></h2>
+<p class="hint" id="md"></p>
+<button id="again" style="margin-top:8px">Cantar de novo</button>
+</div>
+</div>
+
+<script type="text/plain" id="tw">
+const SC=[[1,1,1,1,1,1,1,1,1,1,1,1],[1,0,1,0,1,1,0,1,0,1,0,1],[1,0,1,1,0,1,0,1,1,0,1,0]];
+class Tune extends AudioWorkletProcessor{
+constructor(){super();
+ this.N=16384;this.M=this.N-1;this.buf=new Float32Array(this.N);this.w=0;
+ this.W=Math.round(sampleRate*0.04);
+ this.ph=new Float32Array(3).fill(0.5);
+ this.D=Math.max(1,Math.round(sampleRate/16000));this.sr=sampleRate/this.D;
+ this.A=new Float32Array(512);this.ai=0;this.acc=0;this.ac=0;this.hop=0;
+ this.lin=new Float32Array(512);
+ this.hist=[0,0,0];this.fm=0;this.s=1;this.st=1;this.voiced=false;this.tune=0;this.cs=0;
+ this.p={on:false,tune:false,key:0,scale:0,speed:.35,shift:0,voices:[[0,1]]};
+ this.port.onmessage=e=>{this.p=Object.assign({},this.p,e.data)};
+}
+detect(){
+ const n=512,A=this.A,x=this.lin;
+ for(let i=0;i<n;i++)x[i]=A[(this.ai+i)&511];
+ let e=0;for(let i=0;i<n;i++)e+=x[i]*x[i];
+ if(Math.sqrt(e/n)<0.012){this.voiced=false;this.hist=[0,0,0];return}
+ const sr=this.sr,lo=Math.max(2,Math.floor(sr/800)),hi=Math.min(Math.floor(sr/80),n>>1),c=new Float32Array(hi+2);
+ let m=0;
+ for(let l=lo-1;l<=hi+1;l++){let s=0;for(let i=0;i+l<n;i++)s+=x[i]*x[i+l];c[l]=s;if(l>=lo&&l<=hi&&s>m)m=s}
+ if(m/e<0.5){this.voiced=false;return}
+ let lag=0;
+ for(let l=lo;l<=hi;l++)if(c[l]>.9*m&&c[l]>=c[l-1]&&c[l]>=c[l+1]){lag=l;break}
+ if(!lag){this.voiced=false;return}
+ const a=c[lag-1],b=c[lag],d=c[lag+1],den=a-2*b+d;
+ if(den<0)lag+=0.5*(a-d)/den;
+ const f=sr/lag;
+ this.hist.shift();this.hist.push(f);
+ const hs=this.hist.slice().sort((p,q)=>p-q),fm=hs[1]>0?hs[1]:f;
+ const midi=69+12*Math.log2(fm/440),p=this.p,mask=SC[p.scale]||SC[0],base=Math.round(midi);
+ let best=null,bd=99;
+ for(let k=base-2;k<=base+2;k++){const pc=(((k-p.key)%12)+12)%12;if(mask[pc]){const dd=Math.abs(k-midi);if(dd<bd){bd=dd;best=k}}}
+ this.tune=best===null?0:best-midi;this.fm=fm;this.voiced=true;
+}
+rd(d){const pos=this.w-d,i=Math.floor(pos),f=pos-i,b=this.buf,M=this.M;return b[i&M]+(b[(i+1)&M]-b[i&M])*f}
+process(inputs,outputs){
+ const inp=inputs[0]&&inputs[0][0],out=outputs[0]&&outputs[0][0];
+ if(!out)return true;
+ const p=this.p;
+ if(!inp||!p.on){out.fill(0);return true}
+ const n=inp.length,M=this.M,W=this.W,buf=this.buf,ph=this.ph;
+ const tau=0.004+p.speed*0.3,kb=1-Math.exp(-n/(tau*sampleRate));
+ const tgt=(p.tune&&this.voiced)?this.tune:0;
+ this.cs+=(tgt-this.cs)*kb;
+ if(this.fm>0){const T=sampleRate/this.fm,m=Math.max(1,Math.round(0.5*W/T));this.st=Math.min(1.4,Math.max(0.7,2*m*T/W))}
+ this.s+=(this.st-this.s)*(1-Math.exp(-n/(0.08*sampleRate)));
+ const We=W*this.s;
+ const vs=p.voices,nv=Math.min(vs.length,3),rv=[],gv=[];
+ let norm=0;
+ for(let v=0;v<nv;v++){rv[v]=Math.pow(2,(this.cs+p.shift+vs[v][0])/12);gv[v]=vs[v][1];norm+=gv[v]}
+ norm=norm>1?1/Math.sqrt(norm):1;
+ for(let i=0;i<n;i++){
+  const x=inp[i];buf[this.w]=x;
+  this.acc+=x;
+  if(++this.ac>=this.D){this.A[this.ai]=this.acc/this.D;this.ai=(this.ai+1)&511;this.acc=0;this.ac=0;if(++this.hop>=64){this.hop=0;this.detect()}}
+  let y=0;
+  for(let v=0;v<nv;v++){
+   const r=rv[v];let s;
+   if(Math.abs(r-1)<0.0005){ph[v]=0.5;s=this.rd(We*0.5)}
+   else{
+    let q=ph[v]+(1-r)/We;q-=Math.floor(q);ph[v]=q;
+    const q2=q+0.5>=1?q-0.5:q+0.5;
+    const g1=0.5-0.5*Math.cos(6.2831853*q),g2=0.5-0.5*Math.cos(6.2831853*q2);
+    s=g1*this.rd(q*We)+g2*this.rd(q2*We);
+   }
+   y+=s*gv[v];
+  }
+  out[i]=y*norm;
+  this.w=(this.w+1)&M;
+ }
+ return true;
+}
+}
+registerProcessor('tune',Tune);
+</script>
+<script>
+const $=s=>document.querySelector(s),N=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const SAMPLE=`[00:03.00]Hoje a noite é toda nossa
+[00:08.00]Luz acesa, voz no ar
+[00:13.00]Canta junto, não tem hora
+[00:18.00]Que o refrão vai começar
+[00:23.00]La la la, todo mundo canta
+[00:28.00]La la la, ninguém vai parar
+[00:33.00]`;
+let L=[],ref=null,hasA=false,ctx,an,mon,fx={},running=0,t0=0,hit=0,tot=0,tm;
+const S={mon:0,eco:0,rev:0,rob:0},audio=new Audio(),buf=new Float32Array(2048),ly=$('#ly');
+const st=m=>$('#st').textContent=m;
+const now=()=>hasA?audio.currentTime:(performance.now()-t0)/1000;
+const nm=f=>{const n=Math.round(12*Math.log2(f/440))+69;return N[n%12]+(Math.floor(n/12)-1)};
+const dist=(f,r)=>{const d=Math.abs(12*Math.log2(f/r))%12;return Math.min(d,12-d)};
+
+function parse(t){return t.split('\n').map(l=>{const m=l.match(/^\[(\d+):(\d+(?:\.\d+)?)\](.*)$/);return m&&{t:+m[1]*60+ +m[2],s:m[3].trim()}}).filter(Boolean).sort((a,b)=>a.t-b.t)}
+function render(){L=parse($('#lrc').value);ly.innerHTML='';L.forEach(x=>{const d=document.createElement('div');d.textContent=x.s;if(!x.s)d.hidden=true;ly.appendChild(d)})}
+$('#lrc').value=SAMPLE;$('#lrc').oninput=render;render();
+
+function pitch(b,sr,g){const n=b.length;let e=0;for(let i=0;i<n;i++)e+=b[i]*b[i];if(Math.sqrt(e/n)<g)return 0;
+const lo=Math.floor(sr/800),hi=Math.min(Math.floor(sr/80),n>>1),c=[];let m=0;
+for(let l=lo-1;l<=hi+1;l++){let s=0;for(let i=0;i+l<n;i++)s+=b[i]*b[i+l];c[l]=s;if(l>=lo&&l<=hi&&s>m)m=s}
+if(m/e<.45)return 0;
+for(let l=lo;l<=hi;l++)if(c[l]>.9*m&&c[l]>=c[l-1]&&c[l]>=c[l+1])return sr/l;return 0}
+
+let off=0,wl;
+async function analyze(ab,j){st('Analisando a voz original…');await new Promise(r=>setTimeout(r,30));
+try{const c=new AudioContext({sampleRate:11025}),b=await c.decodeAudioData(ab),d=b.getChannelData(0),o=[];
+for(let k=0;;k++){const i=Math.round(k*1102.5);if(i+512>d.length)break;o.push(pitch(d.subarray(i,i+512),11025,.01))}
+ref=o;c.close();st('Pronto! A pontuação vai medir sua afinação. Toque em Cantar.'+(j&&j.engine?' Separado em '+j.secs+' s no '+j.engine+'.':''))}catch(x){st('Não consegui analisar a voz original.')}}
+const J=async u=>(await fetch(u)).json();
+$('#q').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
+$('#go').onclick=async()=>{const q=$('#q').value.trim();if(!q)return;st('Buscando…');
+try{const r=await J('/api/search?q='+encodeURIComponent(q));$('#rs').innerHTML='';st(r.length?'':'Nada encontrado.');
+r.forEach(v=>{const b=document.createElement('button'),s=document.createElement('small'),m=v.duration?Math.floor(v.duration/60)+':'+String(v.duration%60|0).padStart(2,'0'):'';
+b.className='r';b.textContent=v.title;s.textContent=v.channel+(m?' · '+m:'');b.append(document.createElement('br'),s);b.onclick=()=>pick(v);$('#rs').appendChild(b)})}
+catch(e){st('Servidor não encontrado: rode o app.py e abra o endereço local.')}};
+async function pick(v){setCover(v.id);ref=null;audio.pause();vc.pause();vc.removeAttribute('src');vc.load();$('#gv').disabled=true;cur.d=v.duration||0;$('#lq').value=v.title.replace(/[\(\[].*?[\)\]]/g,'').trim();st('Enviando pedido…');
+await fetch('/api/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:v.id,title:v.title,duration:v.duration||0,channel:v.channel||''})});
+const t0=Date.now(),poll=async()=>{const j=await J('/api/job/'+v.id);if(j.error){$('#pg').hidden=true;return st('Erro: '+j.error)}if(!j.done){$('#pg').hidden=false;$('#pg').value=j.pct||0;st((j.step||'Na fila…')+' — '+(j.pct||0)+'% ('+Math.round((Date.now()-t0)/1000)+' s)');return setTimeout(poll,1000)}
+$('#pg').hidden=true;audio.src='/files/'+v.id+'/no_vocals.mp3';hasA=true;vc.src='/files/'+v.id+'/vocals.mp3';$('#gv').disabled=false;
+await analyze(await (await fetch('/files/'+v.id+'/vocals.mp3')).arrayBuffer(),j);
+if(j.lrc){$('#lrc').value=await (await fetch('/files/'+v.id+'/lyrics.lrc')).text();render()}else{$('#lrc').value='';render();st('Letra sincronizada não encontrada: cole uma LRC abaixo.')}};poll()}
+const sh=d=>{off+=d;$('#of').textContent='sincronia '+(off>0?'+':'')+off+' s'};
+$('#e').onclick=()=>sh(.5);$('#l').onclick=()=>sh(-.5);
+const cur={d:0};
+$('#lb').onclick=async()=>{const q=$('#lq').value.trim();if(!q)return;st('Buscando a letra…');
+try{const j=await J('/api/lyrics?q='+encodeURIComponent(q)+'&d='+(cur.d||0));
+if(j.lrc){$('#lrc').value=j.lrc;render();st('Letra encontrada.')}else st('Não achei letra sincronizada. Tente outro nome ou cole uma LRC.')}catch(e){st('Erro ao buscar a letra.')}};
+
+let tn=null;const V={on:false};
+const PR={off:{},sue:{tune:1,speed:.35},for:{tune:1,speed:0},agu:{shift:7},gra:{shift:-5},cor:{tune:1,speed:.3,v:[[0,1],[4,.55],[7,.5]]},oit:{tune:1,speed:.3,v:[[0,1],[12,.45]]}};
+N.forEach((n,i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;$('#vk').appendChild(o)});
+function pushVoice(){const k=$('#vz').value,P=PR[k]||{},minor=$('#vs').value==='2';V.on=k!=='off';
+if(tn)tn.port.postMessage({on:V.on,tune:!!P.tune,key:+$('#vk').value,scale:+$('#vs').value,speed:+$('#vr').value,shift:P.shift||0,voices:(P.v||[[0,1]]).map(([o,g])=>[o===4&&minor?3:o,g])});
+else if(V.on&&an)st('Efeito de voz indisponível neste navegador.');
+apply()}
+$('#vz').onchange=()=>{const P=PR[$('#vz').value]||{};if(P.speed!==undefined)$('#vr').value=P.speed;pushVoice()};
+['#vk','#vs','#vr'].forEach(s=>$(s).oninput=pushVoice);
+
+function setCover(id){const bg=$('#bg'),L=['maxresdefault','mqdefault'];let i=0;const img=new Image();
+const next=()=>{img.src='https://i.ytimg.com/vi/'+id+'/'+L[i]+'.jpg'};
+img.onload=()=>{if(img.naturalWidth>120){bg.style.backgroundImage='url('+img.src+')';document.body.classList.add('has-cover')}else if(i<L.length-1){i++;next()}};
+img.onerror=()=>{if(i<L.length-1){i++;next()}};next()}
+const vc=new Audio();let vg=null,gv=0;
+function vocalNode(){if(vg||!ctx)return;try{vg=ctx.createGain();vg.gain.value=gv;ctx.createMediaElementSource(vc).connect(vg).connect(ctx.destination);vc.volume=1}catch(e){vg=null}}
+$('#gv').oninput=e=>{gv=+e.target.value;$('#gvn').textContent=Math.round(gv*100)+'%';if(vg)vg.gain.value=gv;else vc.volume=gv};
+let outId='';try{outId=localStorage.getItem('out')||''}catch(e){}
+const canSink=typeof HTMLMediaElement!=='undefined'&&'setSinkId' in HTMLMediaElement.prototype;
+function newCtx(){try{return new AudioContext(outId?{sinkId:outId}:{})}catch(e){return new AudioContext()}}
+async function applyOut(silent){if(!canSink)return;
+const t=[audio.setSinkId(outId),vc.setSinkId(outId)];if(ctx&&ctx.setSinkId)t.push(ctx.setSinkId(outId));
+const r=await Promise.allSettled(t);if(!silent&&r.some(x=>x.status==='rejected'))st('Não consegui usar essa saída de áudio.')}
+async function listOuts(){try{const d=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==='audiooutput'),sel=$('#out');if(!d.length)return;sel.innerHTML='';
+d.forEach((x,i)=>{const o=document.createElement('option');o.value=x.deviceId;o.textContent=x.label||('Saída '+(i+1));sel.appendChild(o)});
+if(outId&&d.some(x=>x.deviceId===outId))sel.value=outId}catch(e){}}
+$('#out').onchange=async e=>{outId=e.target.value;try{localStorage.setItem('out',outId)}catch(x){}await applyOut();st('Saída de áudio trocada.')};
+if(!canSink){if(matchMedia('(pointer:coarse)').matches){$('#out').hidden=true;$('#outl').hidden=true}else{$('#out').disabled=true;$('#outh').hidden=false}}else if(outId)applyOut(true);
+let micStream,micSrc,inGain,micId='';
+try{micId=localStorage.getItem('mic')||''}catch(e){}
+const mq=()=>({audio:{deviceId:micId?{exact:micId}:undefined,echoCancellation:matchMedia('(pointer:coarse)').matches,noiseSuppression:false,autoGainControl:false}});
+async function ensureCtx(){ctx=ctx||newCtx();await ctx.resume()}
+async function listMics(){try{const d=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==='audioinput'),sel=$('#mic');sel.innerHTML='';
+d.forEach((x,i)=>{const o=document.createElement('option');o.value=x.deviceId;o.textContent=x.label||('Microfone '+(i+1));sel.appendChild(o)});
+if(micId&&d.some(x=>x.deviceId===micId))sel.value=micId}catch(e){}}
+async function useMic(){let s;
+try{s=await navigator.mediaDevices.getUserMedia(mq())}catch(e){if(micId){micId='';s=await navigator.mediaDevices.getUserMedia(mq())}else throw e}
+if(micStream)micStream.getTracks().forEach(t=>t.stop());
+if(micSrc)micSrc.disconnect();
+micStream=s;micSrc=ctx.createMediaStreamSource(s);
+if(!tn&&ctx.audioWorklet){try{await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([$('#tw').textContent],{type:'application/javascript'})));tn=new AudioWorkletNode(ctx,'tune',{channelCount:1,channelCountMode:'explicit',numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]})}catch(e){tn=null}}
+if(inGain)micSrc.connect(inGain);else build(micSrc);
+pushVoice();
+await listMics();await listOuts()}
+$('#mt').onclick=async()=>{try{await ensureCtx();await useMic();st('Microfone ativo. Fale para ver a barra mexer.')}catch(e){st('Microfone indisponível: libere a permissão.')}};
+$('#mic').onchange=async e=>{micId=e.target.value;try{localStorage.setItem('mic',micId)}catch(x){}
+if(an){try{await useMic();st('Microfone trocado.')}catch(x){st('Não consegui abrir esse microfone.')}}};
+try{navigator.mediaDevices.addEventListener('devicechange',()=>{if(an){listMics();listOuts()}})}catch(e){}
+setInterval(()=>{if(!an)return;an.getFloatTimeDomainData(buf);let e=0;for(let i=0;i<1024;i++)e+=buf[i]*buf[i];$('#lv').value=Math.min(1,Math.sqrt(e/1024)*6)},100);
+
+function imp(){const n=(ctx.sampleRate*1.8)|0,b=ctx.createBuffer(2,n,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.5)}return b}
+function build(first){const src=ctx.createGain();inGain=src;first.connect(src);const g=v=>{const n=ctx.createGain();n.gain.value=v;return n};
+an=ctx.createAnalyser();an.fftSize=2048;src.connect(an);
+const vs=g(1);fx.byp=g(1);src.connect(fx.byp).connect(vs);fx.tn=g(0);if(tn){src.connect(tn);tn.connect(fx.tn).connect(vs)}
+
+mon=g(0);mon.connect(ctx.destination);
+fx.dry=g(1);vs.connect(fx.dry).connect(mon);
+const dl=ctx.createDelay(1);dl.delayTime.value=.3;dl.connect(g(.4)).connect(dl);fx.eco=g(0);vs.connect(fx.eco).connect(dl);dl.connect(mon);
+const cv=ctx.createConvolver();cv.buffer=imp();fx.rev=g(0);vs.connect(fx.rev).connect(cv).connect(mon);
+const rm=g(0),o=ctx.createOscillator();o.frequency.value=70;o.connect(rm.gain);o.start();fx.rob=g(0);vs.connect(rm).connect(fx.rob).connect(mon);apply()}
+function apply(){if(!mon)return;mon.gain.value=S.mon;fx.eco.gain.value=S.eco;fx.rev.gain.value=S.rev*1.2;fx.rob.gain.value=S.rob;fx.dry.gain.value=S.rob?.2:1;const live=V.on&&tn;fx.byp.gain.value=live?0:1;fx.tn.gain.value=live?1:0}
+document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;S[k]=S[k]?0:1;b.setAttribute('aria-pressed',!!S[k]);apply()});
+
+function tick(){const t=now(),tl=t+off;if(vc.src&&!vc.paused&&Math.abs(vc.currentTime-t)>.12)vc.currentTime=t;let a=-1;L.forEach((x,i)=>{if(x.t<=tl)a=i});
+const line=a>=0&&L[a].s;
+[...ly.children].forEach((d,i)=>d.className=i==a?'on':i<a?'past':'');
+if(line){const d=ly.children[a];ly.scrollTo({top:d.offsetTop-ly.clientHeight/2+d.offsetHeight/2,behavior:'smooth'})}
+let f=0;if(an){an.getFloatTimeDomainData(buf);f=pitch(buf.subarray(0,1024),ctx.sampleRate,.015)}
+const r=ref?(ref[Math.floor(t/.1)]||0):0;let ok=0;
+if(ref){if(r){tot++;if(f&&dist(f,r)<=1.5){hit++;ok=1}}}else if(line){tot++;if(f){hit++;ok=1}}
+$('#note').textContent=f?nm(f):'—';$('#note').className=ok?'ok':'';
+$('#tgt').textContent=r?'(alvo '+nm(r).replace(/\d/g,'')+')':'';
+$('#sc').textContent=tot?Math.round(hit/tot*100):0;
+if(!hasA&&L.length&&t>L[L.length-1].t+1)stop(1)}
+
+function stop(show){try{wl&&wl.release()}catch(e){}clearInterval(tm);audio.pause();vc.pause();running=0;$('#play').textContent='▶ Cantar';
+if(show){const s=tot>4?Math.min(100,Math.round(hit/tot*100)):0;$('#big').textContent=s;
+$('#rk').textContent=s>=90?'Lenda do karaokê! 🏆':s>=75?'Mandou bem! ⭐':s>=50?'Boa! Dá pra melhorar 👏':'Continue treinando 🎶';
+$('#md').textContent=ref?'Nota por afinação, comparada à voz original.':'Nota por participação. Carregue a voz original para medir a afinação.';
+$('#res').hidden=false}}
+audio.onended=()=>running&&stop(1);
+$('#again').onclick=()=>{$('#res').hidden=true};
+
+$('#play').onclick=async()=>{
+if(running){stop(1);return}
+const u=hasA?Promise.all([audio,vc.src?vc:null].filter(Boolean).map(a=>a.play().then(()=>a.pause()).catch(()=>{}))):null;
+try{ctx=ctx||newCtx();await ctx.resume();
+if(!an)await useMic();}
+catch(e){st('Microfone indisponível: libere a permissão para pontuar.')}
+hit=tot=0;if(u)await u;if(hasA){audio.currentTime=0;vocalNode();if(vc.src){vc.currentTime=0;vc.play().catch(()=>{})}await audio.play()}else t0=performance.now();
+running=1;try{wl=await navigator.wakeLock.request('screen')}catch(e){}$('#play').textContent='⏹ Parar';tm=setInterval(tick,100)};
+J('/api/info').then(j=>{if(j.phone&&/localhost|127\.0\.0\.1/.test(location.host)){$('#ph').hidden=false;$('#ph').textContent='No celular (mesmo Wi-Fi): abra '+j.phone}}).catch(()=>{});
+</script>
+</body>
+</html>
